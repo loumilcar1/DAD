@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
 --
--- Host: localhost    Database: smartlap
+-- Host: 127.0.0.1    Database: lap
 -- ------------------------------------------------------
 -- Server version	8.0.19
 
@@ -38,7 +38,7 @@ CREATE TABLE `dispositivo` (
 
 LOCK TABLES `dispositivo` WRITE;
 /*!40000 ALTER TABLE `dispositivo` DISABLE KEYS */;
-INSERT INTO `dispositivo` VALUES (1,1),(2,2);
+INSERT INTO `dispositivo` VALUES (1,1),(2,2),(4,3),(3,4);
 /*!40000 ALTER TABLE `dispositivo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -68,21 +68,25 @@ CREATE TABLE `edificio` (
 
 LOCK TABLES `edificio` WRITE;
 /*!40000 ALTER TABLE `edificio` DISABLE KEYS */;
-INSERT INTO `edificio` VALUES (1,'Av. Reina Mercedes','11111111E','Paco',NULL,'123123123',0),(2,'Calle Alcala','22222222E','Paula',NULL,'321321321',0);
+INSERT INTO `edificio` VALUES (1,'Av. Reina Mercedes','11111111E','Paco',NULL,'123123123',5),(2,'Calle Alcala','22222222E','Paula',NULL,'321321321',2),(3,'Calle Guadalquivir','33333333E','Pepe',NULL,'345634567',6),(4,'Calle Adriano','55555555E','Laura',NULL,'678543256',8),(5,'Calle Sevilla','77777777E','Ana',NULL,'678543245',9);
 /*!40000 ALTER TABLE `edificio` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `sensor`
+-- Table structure for table `sensores`
 --
 
-DROP TABLE IF EXISTS `sensor`;
+DROP TABLE IF EXISTS `sensores`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `sensor` (
+CREATE TABLE `sensores` (
   `idSensor` int NOT NULL,
-  `Tipo` enum('AIRE','TYH','DISTANCIA') NOT NULL,
   `idDispositivo` int NOT NULL,
+  `temperatura` float DEFAULT NULL,
+  `humedad` float DEFAULT NULL,
+  `calidad_aire` int DEFAULT NULL,
+  `timestamp` bigint DEFAULT NULL,
+  `location` int DEFAULT '0',
   PRIMARY KEY (`idSensor`),
   UNIQUE KEY `idSensor_UNIQUE` (`idSensor`),
   KEY `sensor_dispositivo_idx` (`idDispositivo`),
@@ -91,44 +95,13 @@ CREATE TABLE `sensor` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `sensor`
+-- Dumping data for table `sensores`
 --
 
-LOCK TABLES `sensor` WRITE;
-/*!40000 ALTER TABLE `sensor` DISABLE KEYS */;
-INSERT INTO `sensor` VALUES (1,'AIRE',1),(2,'TYH',1),(3,'DISTANCIA',1),(4,'AIRE',2),(5,'TYH',2),(6,'DISTANCIA',2);
-/*!40000 ALTER TABLE `sensor` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `sensor_value`
---
-
-DROP TABLE IF EXISTS `sensor_value`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `sensor_value` (
-  `idsensor_value` int NOT NULL,
-  `valor` float NOT NULL,
-  `idSensor` int NOT NULL,
-  `accuracy` float NOT NULL DEFAULT '0',
-  `timestamp` bigint DEFAULT NULL,
-  `piso` int DEFAULT NULL,
-  PRIMARY KEY (`idsensor_value`),
-  UNIQUE KEY `idsensor_value_UNIQUE` (`idsensor_value`),
-  KEY `sensor_value_sensor_idx` (`idSensor`),
-  CONSTRAINT `sensor_value_sensor` FOREIGN KEY (`idSensor`) REFERENCES `sensor` (`idSensor`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `sensor_value`
---
-
-LOCK TABLES `sensor_value` WRITE;
-/*!40000 ALTER TABLE `sensor_value` DISABLE KEYS */;
-INSERT INTO `sensor_value` VALUES (1,37,2,0,NULL,NULL),(2,35,5,0,NULL,NULL),(3,13,3,0,NULL,NULL),(4,15,6,0,NULL,NULL);
-/*!40000 ALTER TABLE `sensor_value` ENABLE KEYS */;
+LOCK TABLES `sensores` WRITE;
+/*!40000 ALTER TABLE `sensores` DISABLE KEYS */;
+INSERT INTO `sensores` VALUES (1,1,22,34,1000,3478943267,1),(2,1,13,67,1500,1578934679,3),(3,3,40,11,1450,1789034567,2),(4,2,34,89,1200,1674567907,1),(5,4,14,34,700,1435645678,0),(6,3,27,78,900,1432423546,5);
+/*!40000 ALTER TABLE `sensores` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -140,4 +113,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-13 10:23:00
+-- Dump completed on 2020-04-14 10:12:24
