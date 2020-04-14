@@ -1,11 +1,8 @@
-package lapvertx;
+/*package dad.us.dadVertx.apiRestExample;
 
-import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import Types.Humedity;
-import Types.Temperature;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.json.Json;
@@ -13,10 +10,9 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 
-public class LapVerticleApiRest extends AbstractVerticle {
+public class DadVerticleApiRest extends AbstractVerticle {
 
-	private Map<Integer, Temperature> elements = new LinkedHashMap<Integer, Temperature>();
-	private Map<Integer, Humedity> humedity = new LinkedHashMap<Integer, Humedity>();
+	private Map<Integer, DomoState> elements = new LinkedHashMap<>();
 
 	@Override
 	public void start(Future<Void> startFuture) {
@@ -34,21 +30,15 @@ public class LapVerticleApiRest extends AbstractVerticle {
 		router.put("/api/elements").handler(this::addOne);
 		router.delete("/api/elements").handler(this::deleteOne);
 		router.post("/api/elements/:elementid").handler(this::postOne);
-		
-		router.route("/api/humedity*").handler(BodyHandler.create());
-		router.get("/api/humedity").handler(this::getAll);
-		router.put("/api/humedity").handler(this::addOne);
-		router.delete("/api/humedity").handler(this::deleteOne);
-		router.post("/api/elements/:humedityid").handler(this::postOne);
 	}
 
 	private void createSomeData() {
-		Temperature temp1 = new Temperature();
-		elements.put(temp1.getId(), temp1);
-		Temperature temp2 = new Temperature(24,Calendar.getInstance().getTimeInMillis()+1000,"Segundo piso", 2);
-		elements.put(temp2.getId(), temp2);
-		Temperature temp3 = new Temperature(12,Calendar.getInstance().getTimeInMillis()+500,"Primer piso", 1);
-		elements.put(temp3.getId(), temp3);
+		DomoState light1 = new DomoState("Luz salón", "Light", "Encendida");
+		elements.put(light1.getId(), light1);
+		DomoState light2 = new DomoState("Luz pasillo", "Light", "Apagada");
+		elements.put(light2.getId(), light2);
+		DomoState tv1 = new DomoState("TV dormitorio", "Multimedia", "Encendida");
+		elements.put(tv1.getId(), tv1);
 	}
 
 	private void getAll(RoutingContext routingContext) {
@@ -62,7 +52,7 @@ public class LapVerticleApiRest extends AbstractVerticle {
 		routingContext.response().setStatusCode(201).putHeader("content-type", "application/json; charset=utf-8")
 				.end(Json.encodePrettily(element));
 	}
-
+	
 	private void postOne(RoutingContext routingContext) {
 		int id = Integer.parseInt(routingContext.request().getParam("elementid"));
 		DomoState ds = elements.get(id);
@@ -87,4 +77,4 @@ public class LapVerticleApiRest extends AbstractVerticle {
 		super.stop(stopFuture);
 	}
 
-}
+}*/
