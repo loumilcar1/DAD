@@ -23,7 +23,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 	@Override
 	public void start(Promise<Void> startPromise) {
 		MySQLConnectOptions mySQLConnectOptions = new MySQLConnectOptions().setPort(3306).setHost("localhost")
-				.setDatabase("lap").setUser("root").setPassword("xe0915311b7b2");
+				.setDatabase("lap").setUser("root").setPassword("root");
 		PoolOptions poolOptions = new PoolOptions().setMaxSize(5);
 		mySQLPool = MySQLPool.pool(vertx, mySQLConnectOptions, poolOptions);
 		
@@ -35,6 +35,9 @@ public class DatabaseVerticle extends AbstractVerticle{
 				startPromise.fail(result.cause());
 			}
 		});
+		
+		router.get("/lap/dispositivo/pisocalor/:IdEdificio/:location").handler(this::getpisodondehacecalor);
+		router.get("/lap/dispositivo/pisofrio/:IdEdificio/:location").handler(this::getpisodondehacefrio);
 		router.get("/lap/dispositivo/edificiofrio/:IdEdificio").handler(this::getpisosdondehacefrio);
 		router.get("/lap/dispositivo/edificiocalor/:IdEdificio").handler(this::getpisoscalor);
 		router.get("/lap/dispositivo/values/:idDispositivo").handler(this::getValueByDispositivo);
@@ -42,6 +45,76 @@ public class DatabaseVerticle extends AbstractVerticle{
 		router.get("/lap/sensor/values/:idSensor").handler(this::getValueBySensor);
 	}
 	
+private void getpisodondehacecalor(RoutingContext routingContext) {
+		
+		mySQLPool.query("SELECT  sensores.*  FROM lap.sensores,  dispositivo  where  dispositivo.idDispositivo=sensores.idDispositivo and idEdificio="+routingContext.request().getParam("IdEdificio")+" and location="+routingContext.request().getParam("location")+" and temperatura> 28 group by location order by timestamp desc limit 100"
+						+routingContext.request().getParam("idEdificio") + routingContext.request().getParam("location") , 
+				res -> {
+					if (res.succeeded()) {
+						RowSet<Row> resultSet = res.result();
+						System.out.println("El número de elementos obtenidos es " + resultSet.size());
+						JsonArray result = new JsonArray();
+						
+						for (Row row : resultSet) {
+							System.out.println(row);
+							result.add(JsonObject.mapFrom(new Sensores(row.getInteger("idSensor"),
+									row.getInteger("idDispositivo"),
+									row.getFloat("temperatura"),
+									
+									row.getFloat("humedad"),
+									row.getInteger("calidad_aire"),
+									row.getLong("timestamp"),
+									row.getInteger("location"))));
+							System.out.println(result);
+						}
+						
+						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
+							.end(result.encodePrettily());
+					}else {
+						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json")
+							.end((JsonObject.mapFrom(res.cause()).encodePrettily()));
+					}
+				});
+		
+		
+		
+		
+	}
+private void getpisodondehacefrio(RoutingContext routingContext) {
+	
+	mySQLPool.query("SELECT  sensores.*  FROM lap.sensores,  dispositivo  where  dispositivo.idDispositivo=sensores.idDispositivo and idEdificio="+routingContext.request().getParam("IdEdificio")+" and location="+routingContext.request().getParam("location")+" and temperatura< 26 group by location order by timestamp desc limit 100"
+					+routingContext.request().getParam("idEdificio") +routingContext.request().getParam("location"), 
+			res -> {
+				if (res.succeeded()) {
+					RowSet<Row> resultSet = res.result();
+					System.out.println("El número de elementos obtenidos es " + resultSet.size());
+					JsonArray result = new JsonArray();
+					
+					for (Row row : resultSet) {
+						System.out.println(row);
+						result.add(JsonObject.mapFrom(new Sensores(row.getInteger("idSensor"),
+								row.getInteger("idDispositivo"),
+								row.getFloat("temperatura"),
+								
+								row.getFloat("humedad"),
+								row.getInteger("calidad_aire"),
+								row.getLong("timestamp"),
+								row.getInteger("location"))));
+						System.out.println(result);
+					}
+					
+					routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
+						.end(result.encodePrettily());
+				}else {
+					routingContext.response().setStatusCode(401).putHeader("content-type", "application/json")
+						.end((JsonObject.mapFrom(res.cause()).encodePrettily()));
+				}
+			});
+	
+	
+	
+	
+}
 	private void getValueBySensorAndTimestamp(RoutingContext routingContext) {
 		mySQLPool.query("SELECT * FROM lap.sensores WHERE timestamp > " + 
 						routingContext.request().getParam("timestamp") + " AND idsensor = " + 
