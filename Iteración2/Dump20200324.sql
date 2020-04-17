@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: lap
+-- Host: localhost    Database: lap
 -- ------------------------------------------------------
 -- Server version	8.0.19
 
@@ -28,7 +28,7 @@ CREATE TABLE `dispositivo` (
   PRIMARY KEY (`idDispositivo`),
   UNIQUE KEY `idDispositivo_UNIQUE` (`idDispositivo`),
   KEY `dispositivo_edificio_idx` (`idEdificio`),
-  CONSTRAINT `dispositivo_edificio` FOREIGN KEY (`idEdificio`) REFERENCES `edificio` (`idEdificio`)
+  CONSTRAINT `dispositivo_edificio` FOREIGN KEY (`idEdificio`) REFERENCES `edificio` (`idEdificio`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -38,7 +38,7 @@ CREATE TABLE `dispositivo` (
 
 LOCK TABLES `dispositivo` WRITE;
 /*!40000 ALTER TABLE `dispositivo` DISABLE KEYS */;
-INSERT INTO `dispositivo` VALUES (1,1),(2,2);
+INSERT INTO `dispositivo` VALUES (2,2);
 /*!40000 ALTER TABLE `dispositivo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -68,7 +68,7 @@ CREATE TABLE `edificio` (
 
 LOCK TABLES `edificio` WRITE;
 /*!40000 ALTER TABLE `edificio` DISABLE KEYS */;
-INSERT INTO `edificio` VALUES (1,'c/reina mercedes','11111111V','GUstavo',NULL,'638064638',4),(2,'c/alberto','22222222D','Naty',NULL,'666666666',3);
+INSERT INTO `edificio` VALUES (2,'c/alberto','22222222D','Naty',NULL,'666666666',3);
 /*!40000 ALTER TABLE `edificio` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -90,7 +90,7 @@ CREATE TABLE `sensores` (
   PRIMARY KEY (`idSensor`),
   UNIQUE KEY `idSensor_UNIQUE` (`idSensor`),
   KEY `Senosres_dispositivo_idx` (`idDispositivo`),
-  CONSTRAINT `Senosres_dispositivo` FOREIGN KEY (`idDispositivo`) REFERENCES `dispositivo` (`idDispositivo`)
+  CONSTRAINT `Senosres_dispositivo` FOREIGN KEY (`idDispositivo`) REFERENCES `dispositivo` (`idDispositivo`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -100,7 +100,7 @@ CREATE TABLE `sensores` (
 
 LOCK TABLES `sensores` WRITE;
 /*!40000 ALTER TABLE `sensores` DISABLE KEYS */;
-INSERT INTO `sensores` VALUES (1,1,18,38,1400,1587123268,2),(2,1,34,25,1000,1587120268,1),(3,1,25,10,500,1587103268,2),(4,1,26,80,600,1587023268,1),(5,2,14,37,1500,1587124476,0);
+INSERT INTO `sensores` VALUES (5,2,14,37,1500,1587124476,0);
 /*!40000 ALTER TABLE `sensores` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -113,4 +113,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-17 17:13:38
+-- Dump completed on 2020-04-17 17:56:51

@@ -43,6 +43,10 @@ public class DatabaseVerticle extends AbstractVerticle{
 		router.get("/lap/dispositivo/values/:idDispositivo").handler(this::getValueByDispositivo);
 		router.get("/lap/dispositivo/values/:idSensor/:timestamp").handler(this::getValueBySensorAndTimestamp);
 		router.get("/lap/sensor/values/:idSensor").handler(this::getValueBySensor);
+		router.get("/lap/dispositivo/values/:IdEdificio/:location").handler(this::getValueByPiso);
+		router.get("/lap/dispositivo/values/:IdEdificio/:location").handler(this::getValueByEdificio);
+		router.get("/lap/sensor/borrarEdificio/:idEdificio").handler(this::deleteEdificio);
+		
 	}
 	
 private void getpisodondehacecalor(RoutingContext routingContext) {
@@ -260,5 +264,71 @@ private void getpisodondehacefrio(RoutingContext routingContext) {
 					}
 				});
 	}
-
+	
+	private void getValueByPiso(RoutingContext routingContext) {
+		mySQLPool.query("SELECT sensores.idSensor,sensores.idDispositivo,sensores.temperatura,sensores.humedad,sensores.calidad_aire, sensores.timestamp,sensores.location FROM sensores inner join dispositivo on sensores.idDispositivo = dispositivo.idDispositivo "
+				+ "inner join edificio on dispositivo.idEdificio=edificio.idEdificio where edificio.idEdificio="+routingContext.request().getParam("idEdificio")+" and sensores.location="+routingContext.request().getParam("location"), 
+				res -> {
+					if (res.succeeded()) {
+						RowSet<Row> resultSet = res.result();
+						System.out.println("El número de elementos obtenidos es " + resultSet.size());
+						JsonArray result = new JsonArray();
+						
+						for (Row row : resultSet) {
+							System.out.println(row);
+							result.add(JsonObject.mapFrom(new Sensores(row.getInteger("idSensor"),
+									row.getInteger("idDispositivo"),
+									row.getFloat("temperatura"),	
+									row.getFloat("humedad"),
+									row.getInteger("calidad_aire"),
+									row.getLong("timestamp"),
+									row.getInteger("location"))));
+							System.out.println(result);
+						}
+						
+						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
+							.end(result.encodePrettily());
+					}else {
+						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json")
+							.end((JsonObject.mapFrom(res.cause()).encodePrettily()));
+					}
+				});
+	}
+	
+	private void getValueByEdificio(RoutingContext routingContext) {
+		mySQLPool.query("SELECT sensores.idSensor,sensores.idDispositivo,sensores.temperatura,sensores.humedad,sensores.calidad_aire,sensores.timestamp,sensores.location FROM sensores inner join dispositivo on sensores.idDispositivo = dispositivo.idDispositivo"
+				+ "			inner join edificio on dispositivo.idEdificio=edificio.idEdificio where edificio.idEdificio="+routingContext.request().getParam("idEdificio"), 
+				res -> {
+					if (res.succeeded()) {
+						RowSet<Row> resultSet = res.result();
+						System.out.println("El número de elementos obtenidos es " + resultSet.size());
+						JsonArray result = new JsonArray();
+						
+						for (Row row : resultSet) {
+							System.out.println(row);
+							result.add(JsonObject.mapFrom(new Sensores(row.getInteger("idSensor"),
+									row.getInteger("idDispositivo"),
+									row.getFloat("temperatura"),
+									row.getFloat("humedad"),
+									row.getInteger("calidad_aire"),
+									row.getLong("timestamp"),
+									row.getInteger("location"))));
+							System.out.println(result);
+						}
+						
+						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
+							.end(result.encodePrettily());
+					}else {
+						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json")
+							.end((JsonObject.mapFrom(res.cause()).encodePrettily()));
+					}
+				});
+	}
+	
+	private void deleteEdificio(RoutingContext routingContext) {
+		mySQLPool.query("DELETE  FROM `lap`.`edificio` WHERE edificio.idEdificio="+routingContext.request().getParam("idEdificio"), 
+				res -> {
+					System.out.println("Se ha borrado el edificio "+routingContext.request().getParam("idEdificio")+".");
+				});
+	}
 }
