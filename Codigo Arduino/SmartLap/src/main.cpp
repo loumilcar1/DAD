@@ -2,13 +2,13 @@
 #include "ArduinoJson.h"
 #include <WiFi.h>
 #include <HTTPClient.h>
-//#include <SoftwareSerial.h>
+#include <SoftwareSerial.h>
 
 char responseBuffer[300];
 WiFiClient client;
 
-String SSID = "HUAWEI-B318-1F26";
-String PASS = "Y3LJM9DN8N6";
+string SSID = "HUAWEI-B318-1F26";
+string PASS = "Y3LJM9DN8N6";
 
 String SERVER_IP = "www.mocky.io";
 int SERVER_PORT = 80;
@@ -31,13 +31,13 @@ void setup() {
 }
 
 void loop() {
-  sendGetRequest();
+//  sendGetRequest();
+//  delay(3000);
+  sendPostRequest();
   delay(3000);
-  //sendPostRequest();
-  //delay(3000);
 }
 
-void sendGetRequest(){
+/*void sendGetRequest(){
   if (WiFi.status() == WL_CONNECTED){
     HTTPClient http;
     http.begin(client, SERVER_IP, SERVER_PORT, "/v2/5eb930c82f00006c003c2ec9", true);
@@ -74,7 +74,7 @@ void sendGetRequest(){
     Serial.println("Data: " + String(loc));
   }
 }
-
+*/
 
 
 void sendPostRequest(){

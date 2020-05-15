@@ -53,15 +53,14 @@ public class DatabaseVerticle extends AbstractVerticle {
 	private void putvalueSensor(RoutingContext context) {
 		Sensores sensores = Json.decodeValue(context.getBodyAsString(), Sensores.class);
 		mySQLPool.preparedQuery(
-				"INSERT INTO `lap`.`sensores` (`idDispositivo`, `temperatura`, `humedad`, `calidad_aire`, `timestamp`, `location`) VALUES (?, ?, ?, ?, ?, ?);"
-						+ "",
+				"INSERT INTO sensores (idDispositivo, temperatura, humedad, calidad_aire, timestamp, location) VALUES (?, ?, ?, ?, ?, ?);",
 				Tuple.of(sensores.getIdDispositivo(), sensores.getTemperatura(), sensores.getHumedad(),
 						sensores.getCalidad_aire(), sensores.getTimestamp(), sensores.getLocation()),
 				handler -> {
 					if (handler.succeeded()) {
 						System.out.println(handler.result().rowCount());
 						Long id = handler.result().property(MySQLClient.LAST_INSERTED_ID);
-						// sensores.setIdSensor((int) id);
+						
 						context.response().setStatusCode(200).putHeader("content-type", "application/json")
 								.end(JsonObject.mapFrom(sensores).encodePrettily());
 						;
@@ -77,8 +76,7 @@ public class DatabaseVerticle extends AbstractVerticle {
 	private void putEdificio(RoutingContext context) {
 		Edificio edificio = Json.decodeValue(context.getBodyAsString(), Edificio.class);
 		mySQLPool.preparedQuery(
-				"INSERT INTO `lap`.`edificio` (`idEdificio`, `direccion`, `dni`, `nombre`, `apellidos`, `telefono`, `numPlantas`) VALUES (?, ?, ?, ?, ?, ?, ?);"
-						+ "",
+				"INSERT INTO `lap`.`edificio` (`idEdificio`, `direccion`, `dni`, `nombre`, `apellidos`, `telefono`, `numPlantas`) VALUES (?, ?, ?, ?, ?, ?, ?);",
 				Tuple.of(edificio.getIdEdificio(), edificio.getDireccion(), edificio.getDni(), edificio.getNombre(),
 						edificio.getApellidos(), edificio.getTelefono(), edificio.getNumPlantas()),
 				handler -> {
