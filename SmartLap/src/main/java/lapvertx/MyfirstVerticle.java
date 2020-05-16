@@ -24,9 +24,9 @@ public class MyfirstVerticle extends AbstractVerticle{
 		 }
 	 });
 	vertx.deployVerticle(DatabaseVerticle.class.getName());
-	vertx.deployVerticle(Telegrambot.class.getName());
-	//vertx.deployVerticle(MqttServerVerticle.class.getName());
-	//vertx.deployVerticle(MqttClientVerticle.class.getName());
+	//vertx.deployVerticle(Telegrambot.class.getName());
+	vertx.deployVerticle(MqttServerVerticle.class.getName());
+	vertx.deployVerticle(MqttClientVerticle.class.getName());
 	//vertx.deployVerticle(MqttClientVerticle.class.getName());
 	// vertx.deployVerticle(.class.getName());
 	/* vertx.deployVerticle(mySecondVerticle.class.getName());
