@@ -64,7 +64,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 					if (handler.succeeded()) {
 						System.out.println(handler.result().rowCount());
 						Long id = handler.result().property(MySQLClient.LAST_INSERTED_ID);
-						
+						sensores.setIdSensor(id.intValue());
 						context.response().setStatusCode(200).putHeader("content-type", "application/json")
 								.end(JsonObject.mapFrom(sensores).encodePrettily());
 						;
@@ -80,14 +80,14 @@ public class DatabaseVerticle extends AbstractVerticle{
 	private void putEdificio(RoutingContext context) {
 		Edificio edificio = Json.decodeValue(context.getBodyAsString(), Edificio.class);
 		mySQLPool.preparedQuery(
-				"INSERT INTO `lap`.`edificio` (`idEdificio`, `direccion`, `dni`, `nombre`, `apellidos`, `telefono`, `numPlantas`) VALUES (?, ?, ?, ?, ?, ?, ?);",
-				Tuple.of(edificio.getIdEdificio(), edificio.getDireccion(), edificio.getDni(), edificio.getNombre(),
+				"INSERT INTO `lap`.`edificio` ( `direccion`, `dni`, `nombre`, `apellidos`, `telefono`, `numPlantas`) VALUES ( ?, ?, ?, ?, ?, ?);",
+				Tuple.of( edificio.getDireccion(), edificio.getDni(), edificio.getNombre(),
 						edificio.getApellidos(), edificio.getTelefono(), edificio.getNumPlantas()),
 				handler -> {
 					if (handler.succeeded()) {
 						System.out.println(handler.result().rowCount());
 						Long id = handler.result().property(MySQLClient.LAST_INSERTED_ID);
-
+						edificio.setIdEdificio(id.intValue());
 						context.response().setStatusCode(200).putHeader("content-type", "application/json")
 								.end(JsonObject.mapFrom(edificio).encodePrettily());
 						;
